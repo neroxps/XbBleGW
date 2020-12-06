@@ -1,0 +1,6 @@
+所有BOOM均自由组合
+
+RPW探点  TP1 TP2 TP3 为底板触针  规格2.0*3.5  导电触针
+
+EFM8为射频芯片  固件使用sonffRfbridge 如果你使用Switch库，请去掉该芯片并贴R2 R4
+
