@@ -14,7 +14,7 @@ class MijiaBleListener : public Module
   // 以下框架必须函数
   String getModuleName() { return F("XbBleGW"); }
   String getModuleCNName() { return F("米家蓝牙网关"); }
-  String getModuleVersion() { return F("2020.12.06.2105"); }
+  String getModuleVersion() { return F("2020.12.07.1418"); }
   String getModuleAuthor() { return F("Neroxps"); }
   bool moduleLed();
   void perSecondDo();
@@ -43,7 +43,9 @@ protected:
   std::vector<char> rx_message_;
   // MQTT 发布
   void mqttPublish(int deviceID, const char *payload);
-  void mqttPublish(int deviceID, const char *eid, const char *edata);
+  void mqttPublish(int deviceID, int eid, const char *edata);
+  // 两字节高低转换
+  void reverse_(char *inChar);
 };
 
 #endif
