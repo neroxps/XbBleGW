@@ -30,6 +30,26 @@ char * MijiaBleListener::getJson_(char * inChar){
   }
 }
 
+bool eidHandle_(int did, int eid, const char *edata){
+  switch (eid)
+  {
+  case 11:
+  case 4110:
+    Lock lock;
+    return lock.handle(did, eid, edata);
+  default:
+    Debug::AddInfo(PSTR("eid is unknown %d"), eid);
+    return false;
+  }
+}
+
+void MijiaBleListener::mqttPublish(int deviceID, const char *payload){
+  char topic[80];
+  String did = String(deviceID);
+  sprintf(topic,"%s/unknown",Mqtt::getStatTopic(did).c_str());
+  Mqtt::publish(topic, payload, globalConfig.mqtt.retain);
+}
+
 void MijiaBleListener::handle_(){
   char *data = &rx_message_[0];
   int did;
@@ -93,24 +113,9 @@ void MijiaBleListener::handle_(){
     }
     strcpy(edata,value["edata"].as<char*>());
     this->reverse_(edata);
-    this->mqttPublish(did, eid, edata);
+    // 解析 eid 分流到对应的设备解析器
+    this->eidHandle_(did, eid, edata);
   }
-}
-
-// MQTT 发布
-void MijiaBleListener::mqttPublish(int deviceID, const char *payload){
-  char topic[80];
-  String did = String(deviceID);
-  sprintf(topic,"%s/unknown",Mqtt::getStatTopic(did).c_str());
-  Mqtt::publish(topic, payload, globalConfig.mqtt.retain);
-}
-
-// MQTT 发布
-void MijiaBleListener::mqttPublish(int deviceID, int eid, const char *edata){
-  char topic[80];
-  String did = String(deviceID);
-  sprintf(topic,"%s/%d",Mqtt::getStatTopic(did).c_str(),eid);
-  Mqtt::publish(topic, edata, globalConfig.mqtt.retain);
 }
 
 // 每行读取

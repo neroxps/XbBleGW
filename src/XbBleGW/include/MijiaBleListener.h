@@ -4,6 +4,8 @@
 #include <ArduinoJson.h>
 #include "Module.h"
 
+#include "Lock.h"
+
 #define RX_PIN 23
 
 class MijiaBleListener : public Module 
@@ -35,17 +37,16 @@ protected:
   void readline_(int c);
   // TTL 消息解析器
   void handle_();
-  // edata 解析器
-  // void edataHandle_(int deviceID, int eid, const char *edata);
   // 从 UART 消息中获取json字符串
   char *getJson_(char * inChar);
   // UART 消息缓冲区
   std::vector<char> rx_message_;
   // MQTT 发布
   void mqttPublish(int deviceID, const char *payload);
-  void mqttPublish(int deviceID, int eid, const char *edata);
   // 两字节高低转换
   void reverse_(char *inChar);
+  // eid 解析器
+  bool eidHandle_(int did, int eid, const char *edata);
 };
 
 #endif
