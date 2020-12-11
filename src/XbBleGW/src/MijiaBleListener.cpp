@@ -62,7 +62,7 @@ void MijiaBleListener::handle_(){
   if(!otsMessage){
     return;
   }
-  Debug::AddInfo(PSTR("[otsMessage:] %s"), data);
+  //Debug::AddInfo(PSTR("[otsMessage:] %s"), data);
 
   // 判断是否蓝牙事件
   if(!strstr(data,"_async.ble_event")){

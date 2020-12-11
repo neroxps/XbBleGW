@@ -300,15 +300,17 @@ bool Lock::eventHandle_(int did, const char *eidName, const char *edata){
   if(!this->operateHandle_(edata)){
     return false;
   }
-  char compressJson[measureJson(this->json_)+1] = {0};
+  size_t charSize = measureJson(this->json_)+1;
+  char compressJson[charSize] = {0};
+  serializeJson(this->json_, compressJson, charSize);
   this->mqttPublish_(did, eidName, compressJson);
   return true;
 }
 
 bool Lock::attributesHandle_(int did, const char *eidName, const char *edata){
   // 有可能属性的 edata 里面有时间戳
-  if ((strlen(edata) != 10) || (strlen(edata) != 2)){
-    Debug::AddInfo(PSTR("[Lock::attributesHandle_] The length of edata is wrong. edata: %s"), edata);
+  if ((strlen(edata) != 10) && (strlen(edata) != 2)){
+    Debug::AddInfo(PSTR("[Lock::attributesHandle_] The length of edata is wrong. edata: %s, length: %d"), edata, strlen(edata));
     return false;
   }
   char data[3] = {0};
@@ -327,22 +329,22 @@ bool Lock::attributesHandle_(int did, const char *eidName, const char *edata){
       return false;
     }
   }
-  int dataNum = strtol(data, NULL, 10);
+  uint8_t dataNum = strtol(data, NULL, 16);
   switch (dataNum)
   {
-  case 0:
+  case 0x00:
     this->json_["state"] = "开锁状态";
     break;
-  case 4:
+  case 0x04:
     this->json_["state"] = "锁舌弹出";
     break;
-  case 5:
+  case 0x05:
     this->json_["state"] = "上锁+锁舌弹出";
     break;
-  case 6:
+  case 0x06:
     this->json_["state"] = "反锁+锁舌弹出";
     break;
-  case 7:
+  case 0x07:
     this->json_["state"] = "所有锁舌弹出";
     break;
   default:
@@ -350,7 +352,11 @@ bool Lock::attributesHandle_(int did, const char *eidName, const char *edata){
     return false;
     break;
   }
-
+  size_t charSize = measureJson(this->json_)+1;
+  char compressJson[charSize] = {0};
+  serializeJson(this->json_, compressJson, charSize);
+  this->mqttPublish_(did, eidName, compressJson);
+  return true;
 }
 
 bool Lock::handle(int did, int eid, const char *edata){
