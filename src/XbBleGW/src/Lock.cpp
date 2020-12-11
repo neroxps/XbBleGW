@@ -62,8 +62,8 @@ bool Lock::keyIDHandle_(const char *edata){
   char keyIDHead[5] = {0};
   // 获取 0x80010000 尾部数据 0000
   char keyIDEnd[5] = {0};
-  strncpy(keyIDHead, keyIdString+3, 4);
-  strncpy(keyIDEnd, keyIdString+7, 4);
+  strncpy(keyIDHead, keyIdString, 4);
+  strncpy(keyIDEnd, keyIdString+4, 4);
   uint16_t head = strtol(keyIDHead, NULL, 16);
   uint16_t end = strtol(keyIDEnd, NULL, 16);
   switch (head)
