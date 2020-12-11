@@ -30,16 +30,20 @@ char * MijiaBleListener::getJson_(char * inChar){
   }
 }
 
-bool eidHandle_(int did, int eid, const char *edata){
+bool MijiaBleListener::eidHandle_(int did, int eid, const char *edata){
   switch (eid)
   {
   case 11:
   case 4110:
+  {
     Lock lock;
     return lock.handle(did, eid, edata);
+  }
   default:
+  {
     Debug::AddInfo(PSTR("eid is unknown %d"), eid);
     return false;
+  }
   }
 }
 
